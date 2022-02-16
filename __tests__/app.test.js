@@ -55,21 +55,21 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 
-  test.skip("Status 404 - responds with an object conatining a key of msg and a value of 'valid but non-existent id'.", () => {
+  test("Status 404 - responds with an object conatining a key of msg and value of'No article found for article_id: 20'.", () => {
     return request(app)
       .get("/api/articles/20")
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toEqual("valid but non-existent id");
+        expect(res.body.msg).toEqual("No article found for article_id: 20");
       });
   });
 
-  test.skip("Status 400 - responds with an object containing a key of msg and a value of 'bad request'.", () => {
+  test("Status 400 - responds with an object containing a key of msg and a value of 'invalid input'.", () => {
     return request(app)
       .get("/api/articles/kestrels")
-      .expect(404)
+      .expect(400)
       .then((res) => {
-        expect(res.body.msg).toEqual("bad request");
+        expect(res.body.msg).toEqual("invalid input");
       });
   });
 });
