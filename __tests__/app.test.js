@@ -41,7 +41,6 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then((res) => {
-        console.log(typeof res.body.msg.created_at);
         expect(res.body.msg).toBeInstanceOf(Object);
         expect(res.body.msg).toMatchObject({
           article_id: expect.any(Number),
@@ -69,7 +68,39 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/kestrels")
       .expect(400)
       .then((res) => {
-        expect(res.body.msg).toEqual("invalid input");
+        expect(res.body.msg).toEqual("Bad request");
+      });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("Status 200 - responds with updated article object", () => {
+    const articleUpdate = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(articleUpdate)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.article.article_id).toEqual(1);
+      });
+  });
+  test("Status 400 - responds with an object containing a key of msg and a value of 'Bad request'.", () => {
+    const articleUpdate = {};
+    return request(app)
+      .patch("/api/articles/1")
+      .send(articleUpdate)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toEqual("Bad request");
+      });
+  });
+  test.only("Status 400 - responds with an object containing a key of msg and a value of 'invalid input on request body'.", () => {
+    const articleUpdate = { inc_votes: "turkey" };
+    return request(app)
+      .patch("/api/articles/3")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toEqual("Bad request");
       });
   });
 });
