@@ -37,6 +37,33 @@ describe("Topics", () => {
 });
 
 describe("Users", () => {
+  //ticket 21
+  describe("GET /api/users", () => {
+    test.only("Status 200 - responds with an array of all the user objects containing the username property.", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then((res) => {
+          expect(res.body).toBeInstanceOf(Array);
+          expect(res.body).toHaveLength(4);
+          res.body.forEach((userArrayElement) => {
+            expect(userArrayElement).toMatchObject({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            });
+          });
+        });
+    });
+    test.only("Status: 404 - responds with an object containing a key of msg and a value of 'path not found'.", () => {
+      return request(app)
+        .get("/api/seaguls")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toEqual("path not found");
+        });
+    });
+  });
   //ticket 22
   describe("GET /api/users/:username", () => {
     test("Status: 200 - responds with a user object with the following properties: username, name, avatar_url.", () => {

@@ -1,5 +1,9 @@
 const db = require("../db/connection");
 
+exports.fetchUsers = () => {
+  return db.query("SELECT * FROM users;").then((topics) => topics.rows);
+};
+
 exports.fetchUserByUsername = (username) => {
   return db
     .query("SELECT * FROM users WHERE username = $1;", [username])
