@@ -7,7 +7,9 @@ const app = require("../app");
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
 
+//TOPIC TESTS
 describe("Topics", () => {
+  //ticket 3
   describe("GET /api/topics", () => {
     test("Status: 200 - responds with an array of all topic objects containing a slug and a description.", () => {
       return request(app)
@@ -36,10 +38,12 @@ describe("Topics", () => {
   });
 });
 
+//USER TESTS
 describe("Users", () => {
   //ticket 21
   describe("GET /api/users", () => {
-    test.only("Status 200 - responds with an array of all the user objects containing the username property.", () => {
+    //happy path
+    test("Status 200 - responds with an array of all the user objects containing the username property.", () => {
       return request(app)
         .get("/api/users")
         .expect(200)
@@ -55,7 +59,7 @@ describe("Users", () => {
           });
         });
     });
-    test.only("Status: 404 - responds with an object containing a key of msg and a value of 'path not found'.", () => {
+    test("Status: 404 - responds with an object containing a key of msg and a value of 'path not found'.", () => {
       return request(app)
         .get("/api/seaguls")
         .expect(404)
@@ -94,8 +98,37 @@ describe("Users", () => {
   });
 });
 
+//ARTICLE TESTS
 describe("Articles", () => {
+  //ticket 9
+  describe("GET /api/articles", () => {
+    //happy path
+    test.only("Status: 200 - an array of article objects, each of which should have the following properties: author (which is the `username` from the users table), title, article_id, topic, created_at, votes. The articles should be sorted by date in descending order.", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((res) => {
+          console.log(res.body);
+          expect(res.body).toBeInstanceOf(Array);
+          expect(res.body).toHaveLength(12);
+          res.body.forEach((articleArrayElement) => {
+            expect(articleArrayElement).toMatchObject({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+            });
+          });
+          expect(res.body).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+  });
+  //ticket 14
   describe("GET /api/articles/:article_id", () => {
+    //happy path
     test("Status 200 - responds with an article object with the following propertyies: author, title, article_id, body, topic, created_at, votes.", () => {
       return request(app)
         .get("/api/articles/1")
@@ -114,6 +147,7 @@ describe("Articles", () => {
         });
     });
 
+    //sad path
     test("Status 404 - responds with an object conatining a key of msg and value of'No article found for article_id: 20'.", () => {
       return request(app)
         .get("/api/articles/20")
@@ -123,6 +157,7 @@ describe("Articles", () => {
         });
     });
 
+    //sad path
     test("Status 400 - responds with an object containing a key of msg and a value of 'Bad request'.", () => {
       return request(app)
         .get("/api/articles/kestrels")
@@ -132,7 +167,7 @@ describe("Articles", () => {
         });
     });
   });
-
+  //ticket 7
   describe("PATCH /api/articles/:article_id", () => {
     test("Status 200 - responds with updated article object", () => {
       const articleUpdate = { inc_votes: 1 };
