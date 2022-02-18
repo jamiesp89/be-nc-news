@@ -8,6 +8,7 @@ const { getTopics } = require("./controllers/controller.topics");
 
 //require controller.articles
 const {
+  getArticles,
   getArticleById,
   patchArticleById,
 } = require("./controllers/controller.articles");
@@ -33,6 +34,7 @@ app.get("/api/users", getUsers);
 app.get("/api/users/:username", getUserByUsername);
 
 //article endpoints
+app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.patch("/api/articles/:article_id", patchArticleById);
 
