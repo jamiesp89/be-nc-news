@@ -11,6 +11,7 @@ afterAll(() => db.end());
 describe("Topics", () => {
   //ticket 3
   describe("GET /api/topics", () => {
+    //happy path
     test("Status: 200 - responds with an array of all topic objects containing a slug and a description.", () => {
       return request(app)
         .get("/api/topics")
@@ -27,6 +28,7 @@ describe("Topics", () => {
         });
     });
 
+    //sad path
     test("Status: 404 - responds with an object containing a key of msg and a value of 'path not found'.", () => {
       return request(app)
         .get("/api/chickens")
@@ -43,7 +45,7 @@ describe("Users", () => {
   //ticket 21
   describe("GET /api/users", () => {
     //happy path
-    test("Status 200 - responds with an array of all the user objects containing the username property.", () => {
+    test.only("Status 200 - responds with an array of all the user objects containing the username property.", () => {
       return request(app)
         .get("/api/users")
         .expect(200)
@@ -59,17 +61,10 @@ describe("Users", () => {
           });
         });
     });
-    test("Status: 404 - responds with an object containing a key of msg and a value of 'path not found'.", () => {
-      return request(app)
-        .get("/api/seaguls")
-        .expect(404)
-        .then((res) => {
-          expect(res.body.msg).toEqual("path not found");
-        });
-    });
   });
   //ticket 22
   describe("GET /api/users/:username", () => {
+    //happy path
     test("Status: 200 - responds with a user object with the following properties: username, name, avatar_url.", () => {
       return request(app)
         .get("/api/users/rogersop")
@@ -85,6 +80,8 @@ describe("Users", () => {
           });
         });
     });
+
+    //sad path
     test("Status 404 - responds with an object containing a key of msg and a value of 'No user found for username: rogersop'", () => {
       return request(app)
         .get("/api/users/pigeondave")
@@ -108,7 +105,6 @@ describe("Articles", () => {
         .get("/api/articles")
         .expect(200)
         .then((res) => {
-          console.log(res.body);
           expect(res.body).toBeInstanceOf(Array);
           expect(res.body).toHaveLength(12);
           res.body.forEach((articleArrayElement) => {
@@ -169,6 +165,7 @@ describe("Articles", () => {
   });
   //ticket 7
   describe("PATCH /api/articles/:article_id", () => {
+    //happy path
     test("Status 200 - responds with updated article object", () => {
       const articleUpdate = { inc_votes: 1 };
       return request(app)
@@ -189,6 +186,8 @@ describe("Articles", () => {
           expect(res.body.article.votes).toEqual(101);
         });
     });
+
+    //sad path
     test("Status 400 - Tries to patch with an empty object and responds with an object containing a key of msg and a value of 'Bad request'.", () => {
       const articleUpdate = {};
       return request(app)
@@ -199,6 +198,8 @@ describe("Articles", () => {
           expect(res.body.msg).toEqual("Bad request");
         });
     });
+
+    //sad path
     test("Status 400 - Tries to increment a number by 'turkey' and responds with an object containing a key of msg and a value of 'invalid input on request body'.", () => {
       const articleUpdate = { inc_votes: "turkey" };
       return request(app)
