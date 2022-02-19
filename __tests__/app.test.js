@@ -166,12 +166,6 @@ describe("Articles", () => {
     });
   });
 
-  //ticket5
-  describe("GET /api/articles/:article:id (comment count)", () => {
-    //happy path
-    test("should ", () => {});
-  });
-
   //ticket 7
   describe("PATCH /api/articles/:article_id", () => {
     //happy path
