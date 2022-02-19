@@ -45,7 +45,7 @@ describe("Users", () => {
   //ticket 21
   describe("GET /api/users", () => {
     //happy path
-    test.only("Status 200 - responds with an array of all the user objects containing the username property.", () => {
+    test("Status 200 - responds with an array of all the user objects containing the username property.", () => {
       return request(app)
         .get("/api/users")
         .expect(200)
@@ -100,7 +100,7 @@ describe("Articles", () => {
   //ticket 9
   describe("GET /api/articles", () => {
     //happy path
-    test.only("Status: 200 - an array of article objects, each of which should have the following properties: author (which is the `username` from the users table), title, article_id, topic, created_at, votes. The articles should be sorted by date in descending order.", () => {
+    test("Status: 200 - an array of article objects, each of which should have the following properties: author (which is the `username` from the users table), title, article_id, topic, created_at, votes. The articles should be sorted by date in descending order.", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -122,14 +122,15 @@ describe("Articles", () => {
         });
     });
   });
-  //ticket 14
+  //ticket 14 + ticket 5
   describe("GET /api/articles/:article_id", () => {
     //happy path
-    test("Status 200 - responds with an article object with the following propertyies: author, title, article_id, body, topic, created_at, votes.", () => {
+    test.only("Status 200 - responds with an article object with the following propertyies: author, title, article_id, body, topic, created_at, votes.", () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
         .then((res) => {
+          console.log(res.body.article);
           expect(res.body.article).toBeInstanceOf(Object);
           expect(res.body.article).toMatchObject({
             article_id: expect.any(Number),
@@ -139,6 +140,7 @@ describe("Articles", () => {
             body: expect.any(String),
             created_at: expect.any(String),
             votes: expect.any(Number),
+            comment_count: expect.any(Number),
           });
         });
     });
@@ -163,6 +165,13 @@ describe("Articles", () => {
         });
     });
   });
+
+  //ticket5
+  describe("GET /api/articles/:article:id (comment count)", () => {
+    //happy path
+    test("should ", () => {});
+  });
+
   //ticket 7
   describe("PATCH /api/articles/:article_id", () => {
     //happy path
