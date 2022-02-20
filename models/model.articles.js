@@ -14,8 +14,9 @@ exports.fetchArticleById = (article_id) => {
     )
     .then((result) => {
       const article = result.rows[0];
-      article.comment_count = parseInt(article.comment_count);
-      console.log(typeof article.comment_count);
+      if (article) {
+        article.comment_count = parseInt(article.comment_count);
+      }
       if (!article) {
         return Promise.reject({
           status: 404,
@@ -23,6 +24,25 @@ exports.fetchArticleById = (article_id) => {
         });
       }
       return article;
+    });
+};
+
+exports.fetchArticleIdComments = (article_id) => {
+  return db
+    .query(
+      "SELECT articles.article_id, comments.* FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1;",
+      [article_id]
+    )
+    .then((result) => {
+      const comments = result.rows;
+      console.log(comments);
+      if (comments.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `No comments found for article_id: ${article_id}`,
+        });
+      }
+      return comments;
     });
 };
 

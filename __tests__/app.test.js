@@ -125,7 +125,7 @@ describe("Articles", () => {
   //ticket 14 + ticket 5
   describe("GET /api/articles/:article_id", () => {
     //happy path
-    test.only("Status 200 - responds with an article object with the following propertyies: author, title, article_id, body, topic, created_at, votes.", () => {
+    test("Status 200 - responds with an article object with the following propertyies: author, title, article_id, body, topic, created_at, votes.", () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
@@ -146,7 +146,7 @@ describe("Articles", () => {
     });
 
     //sad path
-    test("Status 404 - responds with an object conatining a key of msg and value of'No article found for article_id: 20'.", () => {
+    test("Status 404 - responds with an object conatining a key of msg and value of 'No article found for article_id: 20'.", () => {
       return request(app)
         .get("/api/articles/20")
         .expect(404)
@@ -159,6 +159,49 @@ describe("Articles", () => {
     test("Status 400 - responds with an object containing a key of msg and a value of 'Bad request'.", () => {
       return request(app)
         .get("/api/articles/kestrels")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toEqual("Bad request");
+        });
+    });
+  });
+
+  //ticket 15
+  describe("GET /api/articles/:article_id/comments", () => {
+    //happy path
+    test("Status 200 - responds with an an array of comments for the given article_id of which each comment should have the following properties: comment_id, votes, created_at, author(username from users tables and body.", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then((res) => {
+          console.log(res.body.comments);
+          expect(res.body.comments).toBeInstanceOf(Array);
+          expect(res.body.comments[0]).toBeInstanceOf(Object);
+          expect(res.body.comments[0]).toMatchObject({
+            article_id: expect.any(Number),
+            comment_id: expect.any(Number),
+            body: expect.any(String),
+            author: expect.any(String),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+          });
+        });
+    });
+
+    //sad path
+    test("Status 404 - responds with an object conatining a key of msg and value of 'No article found for article_id: 20'.", () => {
+      return request(app)
+        .get("/api/articles/20/comments")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toEqual("No comments found for article_id: 20");
+        });
+    });
+
+    //sad path
+    test("Status 400 - responds with an object containing a key of msg and a value of 'Bad request'.", () => {
+      return request(app)
+        .get("/api/articles/albatross/comments")
         .expect(400)
         .then((res) => {
           expect(res.body.msg).toEqual("Bad request");
