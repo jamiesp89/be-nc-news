@@ -100,7 +100,7 @@ describe("Articles", () => {
   //ticket 9 + ticket 10
   describe("GET /api/articles", () => {
     //happy path
-    test.only("Status: 200 - an array of article objects, each of which should have the following properties: author (which is the `username` from the users table), title, article_id, topic, created_at, votes. The articles should be sorted by date in descending order.", () => {
+    test("Status: 200 - an array of article objects, each of which should have the following properties: author (which is the `username` from the users table), title, article_id, topic, created_at, votes. The articles should be sorted by date in descending order.", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
