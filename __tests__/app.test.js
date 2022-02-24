@@ -97,7 +97,7 @@ describe("Users", () => {
 
 //ARTICLE TESTS
 describe("Articles", () => {
-  //ticket 9
+  //ticket 9 + ticket 10
   describe("GET /api/articles", () => {
     //happy path
     test("Status: 200 - an array of article objects, each of which should have the following properties: author (which is the `username` from the users table), title, article_id, topic, created_at, votes. The articles should be sorted by date in descending order.", () => {
@@ -105,9 +105,10 @@ describe("Articles", () => {
         .get("/api/articles")
         .expect(200)
         .then((res) => {
-          expect(res.body).toBeInstanceOf(Array);
-          expect(res.body).toHaveLength(12);
-          res.body.forEach((articleArrayElement) => {
+          console.log(res.body.articles);
+          expect(res.body.articles).toBeInstanceOf(Array);
+          expect(res.body.articles).toHaveLength(12);
+          res.body.articles.forEach((articleArrayElement) => {
             expect(articleArrayElement).toMatchObject({
               article_id: expect.any(Number),
               title: expect.any(String),
@@ -116,9 +117,12 @@ describe("Articles", () => {
               body: expect.any(String),
               created_at: expect.any(String),
               votes: expect.any(Number),
+              comment_count: expect.any(Number),
             });
           });
-          expect(res.body).toBeSortedBy("created_at", { descending: true });
+          expect(res.body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
         });
     });
   });
