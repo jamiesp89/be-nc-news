@@ -10,6 +10,7 @@ const { getTopics } = require("./controllers/controller.topics");
 const {
   getArticles,
   getArticleById,
+  getArticleIdComments,
   patchArticleById,
 } = require("./controllers/controller.articles");
 
@@ -36,6 +37,7 @@ app.get("/api/users/:username", getUserByUsername);
 //article endpoints
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
+app.get("/api/articles/:article_id/comments", getArticleIdComments);
 app.patch("/api/articles/:article_id", patchArticleById);
 
 app.all("/*", (req, res) => {
