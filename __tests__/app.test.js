@@ -213,13 +213,15 @@ describe("Articles", () => {
           console.log(comments);
           expect(comments).toBeInstanceOf(Array);
           expect(comments).toHaveLength(1);
-          expect(commentArrayElement).toMatchObject({
-            article_id: null,
-            comment_id: null,
-            body: null,
-            author: null,
-            votes: null,
-            created_at: null,
+          comments.forEach((commentArrayElement) => {
+            expect(commentArrayElement).toMatchObject({
+              article_id: null,
+              comment_id: null,
+              body: null,
+              author: null,
+              votes: null,
+              created_at: null,
+            });
           });
         });
     });
@@ -284,7 +286,7 @@ describe("Articles", () => {
     });
 
     //sad path
-    test.only("Status 400 - Tries to increment a number by 'turkey' and responds with an object containing a key of msg and a value of 'invalid input on request body'.", () => {
+    test("Status 400 - Tries to increment a number by 'turkey' and responds with an object containing a key of msg and a value of 'invalid input on request body'.", () => {
       const articleUpdate = { inc_votes: "turkey" };
       // Bear in mind that you're not actually sending this request body - it's essentially the same as the above test
       return request(app)
