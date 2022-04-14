@@ -12,6 +12,7 @@ const {
   getArticleById,
   getArticleIdComments,
   patchArticleById,
+  sendCommentByArticleId,
 } = require('./controllers/controller.articles');
 
 //require controller.users
@@ -39,6 +40,7 @@ app.get('/api/articles', getArticles);
 app.get('/api/articles/:article_id', getArticleById);
 app.get('/api/articles/:article_id/comments', getArticleIdComments);
 app.patch('/api/articles/:article_id', patchArticleById);
+app.post('/api/articles/:article_id/comments', sendCommentByArticleId)
 
 app.all('/*', (req, res) => {
   res.status(404).send({ msg: 'path not found' });

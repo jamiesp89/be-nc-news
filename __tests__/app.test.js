@@ -301,4 +301,77 @@ describe("Articles", () => {
     // For this endpoint, you'll ALSO want to assert against a 404 for article id being non existent and 400 for being invalid
     // Just like you've done for GET - but still need to make sure it works for PATCH too
   });
+
+  //ticket 11
+  describe("POST /api/articles/:article_id/comments", () => {
+    //happy path
+    test.only("responds with status 201 and an object of the posted comment", () => {
+      const req = {
+        username: "rogersop",
+        comment: "Yeah I agree. Totally!",
+      };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(req)
+        .expect(201)
+        .then((res) => {
+          const { body } = res.body;
+          expect(body).toEqual("Yeah I agree. Totally!");
+        });
+    });
+
+    //sad path
+    test('responds with status 404 and msg "article not found" for valid but NON-EXISTENT ID', () => {
+      const req = {
+        username: "rogersop",
+        comment: "Yeah I agree. Totally!",
+      };
+      return request(app)
+        .post("/api/articles/99999/comments")
+        .send(req)
+        .expect(404)
+        .then((res) => {
+          expect(res.body).toEqual({ msg: "article not found" });
+        });
+    });
+
+    //sad path
+    test('responds with status 400 and msg "bad request" when passed a bad ID', () => {
+      const req = {
+        username: "rogersop",
+        comment: "Yeah I agree. Totally!",
+      };
+      return request(app)
+        .post("/api/articles/invalid_id/comments")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body).toEqual({ msg: "bad request" });
+        });
+    });
+
+    //sad path
+    test('responds with status 400 and msg "bad request" when req body is malformed', () => {
+      const req = {};
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
+        });
+    });
+
+    //sad path
+    test('responds with status 400 and msg "bad request" when req body uses incorrect type', () => {
+      const req = { inc_votes: "ten" };
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send(req)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("bad request");
+        });
+    });
+  });
 });

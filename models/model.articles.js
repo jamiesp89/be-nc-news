@@ -1,3 +1,4 @@
+const { user } = require("pg/lib/defaults");
 const db = require("../db/connection");
 
 exports.fetchArticles = () => {
@@ -66,5 +67,18 @@ exports.updateArticleById = (articleId, voteInc) => {
       // This if statement again will never trigger as the parameter `article` is actually the result object
       // Think it was better if you uncomment line 71 👍
       return article.rows[0];
+    });
+};
+
+exports.postCommentByArticleId = (articleId, username, comment) => {
+  return db
+    .query(
+      "INSERT INTO comments (body, article_id, author) VALUES ($1, $2, $3) RETURNING body, author;",
+      [comment, articleId, username]
+    )
+    .then((result) => {
+      console.log(result);
+      const { body } = result.rows[0];
+      return body;
     });
 };
