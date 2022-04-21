@@ -1,4 +1,3 @@
-const res = require("express/lib/response");
 const db = require("../db/connection");
 
 exports.fetchArticles = () => {
@@ -58,7 +57,7 @@ exports.checkArticleExists = (id) => {
       if (result.rows.length === 0) {
         return Promise.reject({
           status: 404,
-          msg: `No comments found for article_id: ${id}`,
+          msg: `Article_id: ${id} not found`,
         });
       }
     });

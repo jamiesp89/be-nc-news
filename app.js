@@ -20,7 +20,10 @@ const {
 } = require("./controllers/controller.users");
 
 //require controller.comments
-const { getArticleIdComments } = require("./controllers/controller.comments");
+const {
+  getArticleIdComments,
+  sendCommentByArticleId,
+} = require("./controllers/controller.comments");
 
 //require errors
 const {
@@ -43,6 +46,7 @@ app.patch("/api/articles/:article_id", patchArticleById);
 
 //comment endpoints
 app.get("/api/articles/:article_id/comments", getArticleIdComments);
+app.post("/api/articles/:article_id/comments", sendCommentByArticleId);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "path not found" });
