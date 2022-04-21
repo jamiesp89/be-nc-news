@@ -276,9 +276,9 @@ describe("Articles", () => {
     // Just like you've done for GET - but still need to make sure it works for PATCH too
   });
 
-  //ticket 11
+  //TICKET 11
   describe("POST /api/articles/:article_id/comments", () => {
-    //happy path
+    //HAPPY PATH
     test("responds with status 201 and an object of the posted comment", () => {
       const req = {
         username: "rogersop",
@@ -293,7 +293,7 @@ describe("Articles", () => {
         });
     });
 
-    //sad path
+    //SAD PATH
     test('responds with status 404 and msg "article not found" for valid but NON-EXISTENT ID', () => {
       const req = {
         username: "rogersop",
@@ -311,7 +311,7 @@ describe("Articles", () => {
         });
     });
 
-    //sad path
+    //SAD PATH
     test('responds with status 400 and msg "bad request" when passed a bad ID', () => {
       const req = {
         username: "rogersop",
@@ -326,7 +326,7 @@ describe("Articles", () => {
         });
     });
 
-    //sad path
+    //SAD PATH
     test('responds with status 400 and msg "bad request" when req body is malformed', () => {
       const req = {};
       return request(app)
@@ -338,7 +338,7 @@ describe("Articles", () => {
         });
     });
 
-    //sad path
+    //SAD PATH
     test('responds with status 400 and msg "bad request" when req body uses incorrect type', () => {
       const req = { inc_votes: "ten" };
       return request(app)
