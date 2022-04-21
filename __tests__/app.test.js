@@ -11,7 +11,7 @@ afterAll(() => db.end());
 describe("Non-existent endpoints", () => {
   test("Status: 404 - responds with an object containing a key of msg and a value of 'path not found'.", () => {
     return request(app)
-      .get("/api/chickens")
+      .get("/api/notAPath")
       .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("path not found");
@@ -21,21 +21,17 @@ describe("Non-existent endpoints", () => {
 
 //TOPIC TESTS
 describe("Topics", () => {
-  //ticket 3
+  //TICKET 3
   describe("GET /api/topics", () => {
-    //happy path
-    test("Status: 200 - responds with an array of all topic objects containing a slug and a description.", () => {
+    //HAPPY PATH
+    test("Status: 200 - responds with an array of all topic objects.", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
         .then((res) => {
-          const { topics } = res.body;
-          // I would refactor here to use the same response body shape as your later tests
-          // Instead of the the reponse body being the topics array, put it on a key of topics
-          // eg. res.body.topics rather than res.body
-          expect(topics).toBeInstanceOf(Array);
-          expect(topics).toHaveLength(3);
-          topics.forEach((topicArrayElement) => {
+          expect(res.body.topics).toBeInstanceOf(Array);
+          expect(res.body.topics).toHaveLength(3);
+          res.body.topics.forEach((topicArrayElement) => {
             expect(topicArrayElement).toMatchObject({
               slug: expect.any(String),
               description: expect.any(String),
@@ -48,18 +44,17 @@ describe("Topics", () => {
 
 //USER TESTS
 describe("Users", () => {
-  //ticket 21
+  //TICKET 21
   describe("GET /api/users", () => {
-    //happy path
-    test("Status 200 - responds with an array of all the user objects containing the username property.", () => {
+    //HAPPY PATH
+    test("Status 200 - responds with an array of all user objects.", () => {
       return request(app)
         .get("/api/users")
         .expect(200)
         .then((res) => {
-          const { users } = res.body;
-          expect(users).toBeInstanceOf(Array);
-          expect(users).toHaveLength(4);
-          users.forEach((usersArrayElement) => {
+          expect(res.body.users).toBeInstanceOf(Array);
+          expect(res.body.users).toHaveLength(4);
+          res.body.users.forEach((usersArrayElement) => {
             expect(usersArrayElement).toMatchObject({
               username: expect.any(String),
               name: expect.any(String),
@@ -69,17 +64,16 @@ describe("Users", () => {
         });
     });
   });
-  //ticket 22
+  //TICKET 22
   describe("GET /api/users/:username", () => {
-    //happy path
-    test("Status: 200 - responds with a user object with the following properties: username, name, avatar_url.", () => {
+    //HAPPY PATH
+    test("Status: 200 - responds with the specified user object.", () => {
       return request(app)
         .get("/api/users/rogersop")
         .expect(200)
         .then((res) => {
-          const { user } = res.body;
-          expect(user).toBeInstanceOf(Object);
-          expect(user).toMatchObject({
+          expect(res.body.user).toBeInstanceOf(Object);
+          expect(res.body.user).toMatchObject({
             username: expect.any(String),
             name: expect.any(String),
             avatar_url: expect.any(String),
@@ -87,8 +81,8 @@ describe("Users", () => {
         });
     });
 
-    //sad path
-    test("Status 404 - responds with an object containing a key of msg and a value of 'No user found for username: rogersop'", () => {
+    //SAD PATH
+    test("Status 404 - responds with an object containing a key of msg and a value of 'No user found for username: pigeondave'", () => {
       return request(app)
         .get("/api/users/pigeondave")
         .expect(404)
@@ -103,18 +97,17 @@ describe("Users", () => {
 
 //ARTICLE TESTS
 describe("Articles", () => {
-  //ticket 9 + ticket 10
+  //TICKET 9 + TICKET 10
   describe("GET /api/articles", () => {
-    //happy path
+    //HAPPY PATH
     test("Status: 200 - an array of article objects, each of which should have the following properties: author (which is the `username` from the users table), title, article_id, topic, created_at, votes. The articles should be sorted by date in descending order.", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
         .then((res) => {
-          const { articles } = res.body;
-          expect(articles).toBeInstanceOf(Array);
-          expect(articles).toHaveLength(12);
-          articles.forEach((articleArrayElement) => {
+          expect(res.body.articles).toBeInstanceOf(Array);
+          expect(res.body.articles).toHaveLength(12);
+          res.body.articles.forEach((articleArrayElement) => {
             expect(articleArrayElement).toMatchObject({
               article_id: expect.any(Number),
               title: expect.any(String),
@@ -126,24 +119,23 @@ describe("Articles", () => {
               comment_count: expect.any(Number),
             });
           });
-          expect(articles).toBeSortedBy("created_at", {
+          expect(res.body.articles).toBeSortedBy("created_at", {
             descending: true,
           });
         });
     });
   });
 
-  //ticket 14 + ticket 5
+  //TICKET 14 + TICKET 5
   describe("GET /api/articles/:article_id", () => {
-    //happy path
+    //HAPPY PATH
     test("Status 200 - responds with an article object with the following propertyies: author, title, article_id, body, topic, created_at, votes.", () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
         .then((res) => {
-          const { article } = res.body;
-          expect(article).toBeInstanceOf(Object);
-          expect(article).toMatchObject({
+          expect(res.body.article).toBeInstanceOf(Object);
+          expect(res.body.article).toMatchObject({
             article_id: 1,
             title: "Living in the shadow of a great man",
             topic: "mitch",
@@ -156,7 +148,7 @@ describe("Articles", () => {
         });
     });
 
-    //sad path
+    //SAD PATH
     test("Status 404 - responds with an object conatining a key of msg and value of 'No article found for article_id: 20'.", () => {
       return request(app)
         .get("/api/articles/20")
@@ -166,7 +158,7 @@ describe("Articles", () => {
         });
     });
 
-    //sad path
+    //SAD PATH
     test("Status 400 - responds with an object containing a key of msg and a value of 'Bad request'.", () => {
       return request(app)
         .get("/api/articles/kestrels")
@@ -177,20 +169,18 @@ describe("Articles", () => {
     });
   });
 
-  //ticket 15
+  //TICKET 15
   describe("GET /api/articles/:article_id/comments", () => {
-    //happy path
+    //HAPPY PATH
     test("Status 200 - responds with an an array of comments for the given article_id of which each comment should have the following properties: comment_id, votes, created_at, author(username from users tables and body.", () => {
       return request(app)
         .get("/api/articles/1/comments")
         .expect(200)
         .then((res) => {
-          const { comments } = res.body;
-          expect(comments).toBeInstanceOf(Array);
-          expect(comments).toHaveLength(11);
-          comments.forEach((commentArrayElement) => {
+          expect(res.body.comments).toBeInstanceOf(Array);
+          expect(res.body.comments).toHaveLength(11);
+          res.body.comments.forEach((commentArrayElement) => {
             expect(commentArrayElement).toMatchObject({
-              article_id: expect.any(Number),
               comment_id: expect.any(Number),
               body: expect.any(String),
               author: expect.any(String),
@@ -201,42 +191,28 @@ describe("Articles", () => {
         });
     });
 
-    // We'll want an extra 200 happy path test for this endpoint
-    // An empty array for no comments but the article DOES exist
-    //happy path
-    test("Status 200 - Responds with an empty array. A test for an article_id that exists but has zero comments", () => {
+    //HAPPY PATH
+    test("Status 200 - Responds with an empty array. Article exists but has zero comments", () => {
       return request(app)
         .get("/api/articles/2/comments")
         .expect(200)
         .then((res) => {
-          const { comments } = res.body;
-          console.log(comments);
-          expect(comments).toBeInstanceOf(Array);
-          expect(comments).toHaveLength(1);
-          comments.forEach((commentArrayElement) => {
-            expect(commentArrayElement).toMatchObject({
-              article_id: null,
-              comment_id: null,
-              body: null,
-              author: null,
-              votes: null,
-              created_at: null,
-            });
-          });
+          expect(res.body.comments).toEqual([]);
         });
     });
 
-    //sad path
+    //SAD PATH
     test("Status 404 - responds with an object conatining a key of msg and value of 'No article found for article_id: 20'.", () => {
       return request(app)
         .get("/api/articles/20/comments")
         .expect(404)
         .then((res) => {
+          console.log(res.body.msg);
           expect(res.body.msg).toEqual("No comments found for article_id: 20");
         });
     });
 
-    //sad path
+    //SAD PATH
     test("Status 400 - responds with an object containing a key of msg and a value of 'Bad request'.", () => {
       return request(app)
         .get("/api/articles/albatross/comments")
@@ -247,9 +223,9 @@ describe("Articles", () => {
     });
   });
 
-  //ticket 7
+  //TICKET 7
   describe("PATCH /api/articles/:article_id", () => {
-    //happy path
+    //HAPPY PATH
     test("Status 200 - responds with updated article object", () => {
       const articleUpdate = { inc_votes: 1 };
       return request(app)
@@ -257,9 +233,8 @@ describe("Articles", () => {
         .send(articleUpdate)
         .expect(200)
         .then((res) => {
-          const article = res.body.article;
-          expect(article).toBeInstanceOf(Object);
-          expect(article).toMatchObject({
+          expect(res.body.article).toBeInstanceOf(Object);
+          expect(res.body.article).toMatchObject({
             article_id: 1,
             title: "Living in the shadow of a great man",
             topic: "mitch",
@@ -272,7 +247,7 @@ describe("Articles", () => {
         });
     });
 
-    //sad path
+    //SAD PATH
     test("Status 400 - Tries to patch with an empty object and responds with an object containing a key of msg and a value of 'Bad request'.", () => {
       const articleUpdate = {};
       return request(app)
@@ -285,7 +260,7 @@ describe("Articles", () => {
         });
     });
 
-    //sad path
+    //SAD PATH
     test("Status 400 - Tries to increment a number by 'turkey' and responds with an object containing a key of msg and a value of 'invalid input on request body'.", () => {
       const articleUpdate = { inc_votes: "turkey" };
       // Bear in mind that you're not actually sending this request body - it's essentially the same as the above test
