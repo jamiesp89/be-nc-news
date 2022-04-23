@@ -9,7 +9,7 @@ afterAll(() => db.end());
 
 //PATH NOT FOUND TEST
 describe("Non-existent endpoints", () => {
-  test("Status: 404 - responds with an object containing a key of msg and a value of 'path not found'.", () => {
+  test("Status: 404 - path provided does not exist.", () => {
     return request(app)
       .get("/api/notAPath")
       .expect(404)
@@ -83,7 +83,7 @@ describe("USERS", () => {
     });
 
     //SAD PATH
-    test("Status 404 - responds with an object for a valid username but non-existent user.", () => {
+    test("Status 404 - valid username but non-existent user.", () => {
       return request(app)
         .get("/api/users/pigeondave")
         .expect(404)
@@ -130,7 +130,7 @@ describe("ARTICLES", () => {
   //TICKET 14 + TICKET 5
   describe("GET /api/articles/:article_id", () => {
     //HAPPY PATH
-    test("Status 200 - responds with a specified article object.", () => {
+    test("Status 200 - responds with the specified article object.", () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
@@ -150,7 +150,7 @@ describe("ARTICLES", () => {
     });
 
     //SAD PATH
-    test("Status 404 - responds with an object for a valid article ID but non-existent article.", () => {
+    test("Status 404 - valid article ID but non-existent article.", () => {
       return request(app)
         .get("/api/articles/20")
         .expect(404)
@@ -160,7 +160,7 @@ describe("ARTICLES", () => {
     });
 
     //SAD PATH
-    test("Status 400 - responds with an object for an invalid article ID.", () => {
+    test("Status 400 - invalid article ID.", () => {
       return request(app)
         .get("/api/articles/kestrels")
         .expect(400)
@@ -173,7 +173,7 @@ describe("ARTICLES", () => {
   //TICKET 7
   describe("PATCH /api/articles/:article_id", () => {
     //HAPPY PATH
-    test("Status 200 - responds with an article object with an updated vote count", () => {
+    test("Status 200 - responds with an article object including the updated vote count.", () => {
       const articleUpdate = { inc_votes: 1 };
       return request(app)
         .patch("/api/articles/1")
@@ -194,7 +194,7 @@ describe("ARTICLES", () => {
     });
 
     //SAD PATH
-    test("Status 404 - responds with an object for a valid request but a non-existent article", () => {
+    test("Status 404 - valid request but a non-existent article", () => {
       const req = { inc_votes: 2 };
       return request(app)
         .patch("/api/articles/1111111")
@@ -206,7 +206,7 @@ describe("ARTICLES", () => {
     });
 
     //SAD PATH
-    test("Status 400 - Tries to patch with invalid data and responds with an object containing a key of msg and a value of 'Bad request'.", () => {
+    test("Status 400 - request has a malformed body / missing required fields.", () => {
       const articleUpdate = {};
       return request(app)
         .patch("/api/articles/1")
@@ -255,7 +255,7 @@ describe("COMMENTS", () => {
     });
 
     //SAD PATH
-    test("Status 404 - responds with an object for a valid article ID but non-existent article.", () => {
+    test("Status 404 - valid article ID but non-existent article.", () => {
       return request(app)
         .get("/api/articles/20/comments")
         .expect(404)
@@ -265,7 +265,7 @@ describe("COMMENTS", () => {
     });
 
     //SAD PATH
-    test("Status 400 - responds with an object for an invalid article ID..", () => {
+    test("Status 400 - invalid article ID..", () => {
       return request(app)
         .get("/api/articles/albatross/comments")
         .expect(400)
@@ -293,7 +293,7 @@ describe("COMMENTS", () => {
     });
 
     //SAD PATH
-    test("Status 404 - responds with 'not found' when passed a valid but non-existent article ID", () => {
+    test("Status 404 - valid but non-existent article ID", () => {
       const req = {
         username: "rogersop",
         comment: "Yeah I agree. Totally!",
@@ -311,7 +311,7 @@ describe("COMMENTS", () => {
     });
 
     //SAD PATH
-    test("Status 400 - responds with 'bad request' when passed an invalid article ID", () => {
+    test("Status 400 - invalid article ID", () => {
       const req = {
         username: "rogersop",
         comment: "Yeah I agree. Totally!",
@@ -326,7 +326,7 @@ describe("COMMENTS", () => {
     });
 
     //SAD PATH
-    test("Status 400 - responds with 'bad request' when passed an invalid req body", () => {
+    test("Status 400 - request has a malformed body / missing required fields", () => {
       const req = {};
       return request(app)
         .post("/api/articles/1/comments")
