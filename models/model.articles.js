@@ -36,8 +36,8 @@ exports.updateArticleById = (articleId, voteInc) => {
       "UPDATE articles SET votes = votes + $2 WHERE article_id = $1 RETURNING *;",
       [articleId, voteInc]
     )
-    .then((article) => {
-      // const article = result.rows[0];
+    .then((result) => {
+      const article = result.rows[0];
       if (!article) {
         return Promise.reject({
           status: 404,
@@ -46,7 +46,7 @@ exports.updateArticleById = (articleId, voteInc) => {
       }
       // This if statement again will never trigger as the parameter `article` is actually the result object
       // Think it was better if you uncomment line 71 👍
-      return article.rows[0];
+      return article;
     });
 };
 

@@ -20,7 +20,7 @@ describe("Non-existent endpoints", () => {
 });
 
 //TOPIC TESTS
-describe("Topics", () => {
+describe("TOPICS", () => {
   //TICKET 3
   describe("GET /api/topics", () => {
     //HAPPY PATH
@@ -43,7 +43,7 @@ describe("Topics", () => {
 });
 
 //USER TESTS
-describe("Users", () => {
+describe("USERS", () => {
   //TICKET 21
   describe("GET /api/users", () => {
     //HAPPY PATH
@@ -64,6 +64,7 @@ describe("Users", () => {
         });
     });
   });
+
   //TICKET 22
   describe("GET /api/users/:username", () => {
     //HAPPY PATH
@@ -82,7 +83,7 @@ describe("Users", () => {
     });
 
     //SAD PATH
-    test("Status 404 - responds with an object containing a key of msg and a value of 'No user found for username: pigeondave'", () => {
+    test("Status 404 - responds with an object for a valid username but non-existent user.", () => {
       return request(app)
         .get("/api/users/pigeondave")
         .expect(404)
@@ -96,11 +97,11 @@ describe("Users", () => {
 });
 
 //ARTICLE TESTS
-describe("Articles", () => {
+describe("ARTICLES", () => {
   //TICKET 9 + TICKET 10
   describe("GET /api/articles", () => {
     //HAPPY PATH
-    test("Status: 200 - an array of article objects, each of which should have the following properties: author (which is the `username` from the users table), title, article_id, topic, created_at, votes. The articles should be sorted by date in descending order.", () => {
+    test("Status: 200 - responds with an array of article objects, sorted by date in descending order.", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -129,7 +130,7 @@ describe("Articles", () => {
   //TICKET 14 + TICKET 5
   describe("GET /api/articles/:article_id", () => {
     //HAPPY PATH
-    test("Status 200 - responds with an article object with the following propertyies: author, title, article_id, body, topic, created_at, votes.", () => {
+    test("Status 200 - responds with a specified article object.", () => {
       return request(app)
         .get("/api/articles/1")
         .expect(200)
@@ -149,7 +150,7 @@ describe("Articles", () => {
     });
 
     //SAD PATH
-    test("Status 404 - responds with an object conatining a key of msg and value of 'No article found for article_id: 20'.", () => {
+    test("Status 404 - responds with an object for a valid article ID but non-existent article.", () => {
       return request(app)
         .get("/api/articles/20")
         .expect(404)
@@ -159,20 +160,72 @@ describe("Articles", () => {
     });
 
     //SAD PATH
-    test("Status 400 - responds with an object containing a key of msg and a value of 'Bad request'.", () => {
+    test("Status 400 - responds with an object for an invalid article ID.", () => {
       return request(app)
         .get("/api/articles/kestrels")
         .expect(400)
         .then((res) => {
-          expect(res.body.msg).toEqual("Bad request");
+          expect(res.body.msg).toEqual("bad request");
         });
     });
   });
 
+  //TICKET 7
+  describe("PATCH /api/articles/:article_id", () => {
+    //HAPPY PATH
+    test("Status 200 - responds with an article object with an updated vote count", () => {
+      const articleUpdate = { inc_votes: 1 };
+      return request(app)
+        .patch("/api/articles/1")
+        .send(articleUpdate)
+        .expect(200)
+        .then((res) => {
+          expect(res.body.article).toBeInstanceOf(Object);
+          expect(res.body.article).toMatchObject({
+            article_id: 1,
+            title: "Living in the shadow of a great man",
+            topic: "mitch",
+            author: "butter_bridge",
+            body: "I find this existence challenging",
+            created_at: "2020-07-09T20:11:00.000Z",
+            votes: 101,
+          });
+        });
+    });
+
+    //SAD PATH
+    test("Status 404 - responds with an object for a valid request but a non-existent article", () => {
+      const req = { inc_votes: 2 };
+      return request(app)
+        .patch("/api/articles/1111111")
+        .send(req)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("No article found for aritcle_id: 1111111");
+        });
+    });
+
+    //SAD PATH
+    test("Status 400 - Tries to patch with invalid data and responds with an object containing a key of msg and a value of 'Bad request'.", () => {
+      const articleUpdate = {};
+      return request(app)
+        .patch("/api/articles/1")
+        .send(articleUpdate)
+        .expect(400)
+        .then((res) => {
+          const msg = res.body.msg;
+          expect(msg).toEqual("bad request");
+        });
+    });
+  });
+});
+
+//COMMENT TESTS
+describe("COMMENTS", () => {
   //TICKET 15
   describe("GET /api/articles/:article_id/comments", () => {
     //HAPPY PATH
-    test("Status 200 - responds with an an array of comments for the given article_id of which each comment should have the following properties: comment_id, votes, created_at, author(username from users tables and body.", () => {
+    test("Status 200 - responds with an an array of comments for the given article_id.", () => {
       return request(app)
         .get("/api/articles/1/comments")
         .expect(200)
@@ -202,7 +255,7 @@ describe("Articles", () => {
     });
 
     //SAD PATH
-    test("Status 404 - responds with an object conatining a key of msg and value of 'No article found for article_id: 20'.", () => {
+    test("Status 404 - responds with an object for a valid article ID but non-existent article.", () => {
       return request(app)
         .get("/api/articles/20/comments")
         .expect(404)
@@ -212,74 +265,20 @@ describe("Articles", () => {
     });
 
     //SAD PATH
-    test("Status 400 - responds with an object containing a key of msg and a value of 'Bad request'.", () => {
+    test("Status 400 - responds with an object for an invalid article ID..", () => {
       return request(app)
         .get("/api/articles/albatross/comments")
         .expect(400)
         .then((res) => {
-          expect(res.body.msg).toEqual("Bad request");
+          expect(res.body.msg).toEqual("bad request");
         });
     });
-  });
-
-  //TICKET 7
-  describe("PATCH /api/articles/:article_id", () => {
-    //HAPPY PATH
-    test("Status 200 - responds with updated article object", () => {
-      const articleUpdate = { inc_votes: 1 };
-      return request(app)
-        .patch("/api/articles/1")
-        .send(articleUpdate)
-        .expect(200)
-        .then((res) => {
-          expect(res.body.article).toBeInstanceOf(Object);
-          expect(res.body.article).toMatchObject({
-            article_id: 1,
-            title: "Living in the shadow of a great man",
-            topic: "mitch",
-            author: "butter_bridge",
-            body: "I find this existence challenging",
-            created_at: "2020-07-09T20:11:00.000Z",
-            votes: 101,
-          });
-          // I like that you have this assertion to actually check the votes property has been updated
-        });
-    });
-
-    //SAD PATH
-    test("Status 400 - Tries to patch with an empty object and responds with an object containing a key of msg and a value of 'Bad request'.", () => {
-      const articleUpdate = {};
-      return request(app)
-        .patch("/api/articles/1")
-        .send(articleUpdate)
-        .expect(400)
-        .then((res) => {
-          const msg = res.body.msg;
-          expect(msg).toEqual("Bad request");
-        });
-    });
-
-    //SAD PATH
-    test("Status 400 - Tries to increment a number by 'turkey' and responds with an object containing a key of msg and a value of 'invalid input on request body'.", () => {
-      const articleUpdate = { inc_votes: "turkey" };
-      // Bear in mind that you're not actually sending this request body - it's essentially the same as the above test
-      return request(app)
-        .patch("/api/articles/3")
-        .send(articleUpdate)
-        .expect(400)
-        .then((res) => {
-          const msg = res.body.msg;
-          expect(msg).toEqual("Bad request");
-        });
-    });
-    // For this endpoint, you'll ALSO want to assert against a 404 for article id being non existent and 400 for being invalid
-    // Just like you've done for GET - but still need to make sure it works for PATCH too
   });
 
   //TICKET 11
   describe("POST /api/articles/:article_id/comments", () => {
     //HAPPY PATH
-    test("responds with status 201 and an object of the posted comment", () => {
+    test("Status 201 - responds with the successfully posted comment", () => {
       const req = {
         username: "rogersop",
         comment: "Yeah I agree. Totally!",
@@ -294,7 +293,7 @@ describe("Articles", () => {
     });
 
     //SAD PATH
-    test('responds with status 404 and msg "article not found" for valid but NON-EXISTENT ID', () => {
+    test("Status 404 - responds with 'not found' when passed a valid but non-existent article ID", () => {
       const req = {
         username: "rogersop",
         comment: "Yeah I agree. Totally!",
@@ -306,13 +305,13 @@ describe("Articles", () => {
         .then((res) => {
           console.log(res.body);
           expect(res.body).toEqual({
-            msg: "Not found",
+            msg: "not found",
           });
         });
     });
 
     //SAD PATH
-    test('responds with status 400 and msg "bad request" when passed a bad ID', () => {
+    test("Status 400 - responds with 'bad request' when passed an invalid article ID", () => {
       const req = {
         username: "rogersop",
         comment: "Yeah I agree. Totally!",
@@ -322,31 +321,19 @@ describe("Articles", () => {
         .send(req)
         .expect(400)
         .then((res) => {
-          expect(res.body).toEqual({ msg: "Bad request" });
+          expect(res.body).toEqual({ msg: "bad request" });
         });
     });
 
     //SAD PATH
-    test('responds with status 400 and msg "bad request" when req body is malformed', () => {
+    test("Status 400 - responds with 'bad request' when passed an invalid req body", () => {
       const req = {};
       return request(app)
         .post("/api/articles/1/comments")
         .send(req)
         .expect(400)
         .then((res) => {
-          expect(res.body.msg).toBe("Bad request");
-        });
-    });
-
-    //SAD PATH
-    test('responds with status 400 and msg "bad request" when req body uses incorrect type', () => {
-      const req = { inc_votes: "ten" };
-      return request(app)
-        .post("/api/articles/1/comments")
-        .send(req)
-        .expect(400)
-        .then((res) => {
-          expect(res.body.msg).toBe("Bad request");
+          expect(res.body.msg).toBe("bad request");
         });
     });
   });
