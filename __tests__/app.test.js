@@ -337,4 +337,42 @@ describe("COMMENTS", () => {
         });
     });
   });
+
+  //TICKET 12
+  describe("DELETE /api/comments/:comment_id", () => {
+    //HAPPY PATH
+    test("Status 204 - specified comment is successfully deleted.", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then(() => {
+          return db.query(`SELECT * FROM comments WHERE comment_id = 1;`);
+        })
+        .then((res) => {
+          expect(res.rows).toEqual([]);
+        });
+    });
+
+    //SAD PATH
+    test("Status 404 - valid but non-existent comment ID", () => {
+      return request(app)
+        .delete("/api/comments/1111111")
+        .expect(404)
+        .then((res) => {
+          expect(res.body).toEqual({
+            msg: "comment not found",
+          });
+        });
+    });
+
+    //SAD PATH
+    test("Status 400 - invalid comment ID", () => {
+      return request(app)
+        .delete("/api/comments/invalid_comment_id")
+        .expect(400)
+        .then((res) => {
+          expect(res.body).toEqual({ msg: "bad request" });
+        });
+    });
+  });
 });

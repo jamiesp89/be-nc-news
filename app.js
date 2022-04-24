@@ -1,58 +1,62 @@
+//EXPRESS MODULE
 const express = require("express");
+
 const app = express();
 
+// MIDDLEWARE FUNCTIONS
 app.use(express.json());
 
-//require controller.topics
+//REQUIRE CONTROLLER.TOPICS
 const { getTopics } = require("./controllers/controller.topics");
 
-//require controller.articles
+//REQUIRE CONTROLLER.ARTICLES
 const {
   getArticles,
   getArticleById,
   patchArticleById,
 } = require("./controllers/controller.articles");
 
-//require controller.users
+//REQUIRE CONTROLLER.USERS
 const {
   getUsers,
   getUserByUsername,
 } = require("./controllers/controller.users");
 
-//require controller.comments
+//REQUIRE CONTROLLER.COMMENTS
 const {
   getArticleIdComments,
   sendCommentByArticleId,
+  deleteCommentByCommentId,
 } = require("./controllers/controller.comments");
 
-//require errors
+//REQUIRE CONTROLLER.ERRORS
 const {
   handleCustomErrors,
   handlePsqlErrors,
   handleServerErrors,
 } = require("./controllers/controller.errors");
 
-//topic endpoints
+//TOPIC ENDPOINTS
 app.get("/api/topics", getTopics);
 
-//user endpoints
+//USER ENDPOINTS
 app.get("/api/users", getUsers);
 app.get("/api/users/:username", getUserByUsername);
 
-//article endpoints
+//ARTICLE ENDPOINTS
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.patch("/api/articles/:article_id", patchArticleById);
 
-//comment endpoints
+//COMMENT ENDPOINTS
 app.get("/api/articles/:article_id/comments", getArticleIdComments);
 app.post("/api/articles/:article_id/comments", sendCommentByArticleId);
+app.delete("/api/comments/:comment_id", deleteCommentByCommentId);
 
+//ERROR HANDLING
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "path not found" });
 });
-
-//error handler functions
 app.use(handleCustomErrors);
 app.use(handlePsqlErrors);
 app.use(handleServerErrors);
