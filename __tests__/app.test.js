@@ -99,7 +99,7 @@ describe("USERS", () => {
 //ARTICLE TESTS
 describe("ARTICLES", () => {
   //TICKET 9 + TICKET 10 + TICKET 16
-  describe.only("GET /api/articles", () => {
+  describe("GET /api/articles", () => {
     //HAPPY PATH
     test("Status: 200 - responds with an array of all article objects, arranged with the defaults: sort_by=created_at & order=desc.", () => {
       return request(app)
