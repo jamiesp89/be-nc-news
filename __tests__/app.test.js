@@ -98,10 +98,10 @@ describe("USERS", () => {
 
 //ARTICLE TESTS
 describe("ARTICLES", () => {
-  //TICKET 9 + TICKET 10
-  describe("GET /api/articles", () => {
+  //TICKET 9 + TICKET 10 + TICKET 16
+  describe.only("GET /api/articles", () => {
     //HAPPY PATH
-    test("Status: 200 - responds with an array of article objects, sorted by date in descending order.", () => {
+    test("Status: 200 - responds with an array of all article objects, arranged with the defaults: sort_by=created_at & order=desc.", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
@@ -117,12 +117,54 @@ describe("ARTICLES", () => {
               body: expect.any(String),
               created_at: expect.any(String),
               votes: expect.any(Number),
-              comment_count: expect.any(Number),
+              comment_count: expect.any(String),
             });
           });
           expect(res.body.articles).toBeSortedBy("created_at", {
             descending: true,
           });
+        });
+    });
+
+    //HAPPY PATH
+    test("Status: 200 - response arranged with the default: sort_by=created_at and the user defined query parameter: order=ASC.", () => {
+      return request(app)
+        .get("/api/articles?order=ASC")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSortedBy("created_at", {
+            ascending: true,
+          });
+        });
+    });
+
+    //HAPPY PATH
+    test("Status 200 - response arranged with sort_by=votes and default: order=desc", () => {
+      return request(app)
+        .get("/api/articles?sort_by=votes")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSortedBy("votes", { descending: true });
+        });
+    });
+
+    //SAD PATH
+    test("Status 400 - invalid sort_by query", () => {
+      return request(app)
+        .get("/api/articles?sort_by=invalid_query")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toEqual("Invalid sort query");
+        });
+    });
+
+    //SAD PATH
+    test("Status 400 - invalid order query", () => {
+      return request(app)
+        .get("/api/articles?order=invalid_order")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toEqual("Invalid order query");
         });
     });
   });
@@ -144,7 +186,7 @@ describe("ARTICLES", () => {
             body: "I find this existence challenging",
             created_at: "2020-07-09T20:11:00.000Z",
             votes: 100,
-            comment_count: 11,
+            comment_count: "11",
           });
         });
     });
