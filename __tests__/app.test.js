@@ -167,6 +167,40 @@ describe("ARTICLES", () => {
           expect(res.body.msg).toEqual("Invalid order query");
         });
     });
+
+    //HAPPY PATH
+    test("Status 200 - responds with articles filtered by specified topic", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then((res) => {
+          console.log(res.body.articles);
+          expect(res.body.articles).toBeInstanceOf(Array);
+          expect(res.body.articles).toHaveLength(11);
+          res.body.articles.forEach((articleArrayElement) => {
+            expect(articleArrayElement).toMatchObject({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: "mitch",
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(String),
+            });
+          });
+        });
+    });
+
+    //SAD PATH
+    test("Status 400 - invalid topic query", () => {
+      return request(app)
+        .get("/api/articles?topic=invalid_topic")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toEqual("Invalid topic query");
+        });
+    });
   });
 
   //TICKET 14 + TICKET 5
