@@ -1,3 +1,5 @@
+// const listEndpoints = require("express-list-endpoints");
+
 //EXPRESS MODULE
 const express = require("express");
 
@@ -35,6 +37,10 @@ const {
   handlePsqlErrors,
   handleServerErrors,
 } = require("./controllers/controller.errors");
+
+// app.get("/api", (req, res) => {
+//   res.status(200).send(listEndpoints(app));
+// });
 
 //TOPIC ENDPOINTS
 app.get("/api/topics", getTopics);

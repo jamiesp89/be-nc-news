@@ -174,7 +174,6 @@ describe("ARTICLES", () => {
         .get("/api/articles?topic=mitch")
         .expect(200)
         .then((res) => {
-          console.log(res.body.articles);
           expect(res.body.articles).toBeInstanceOf(Array);
           expect(res.body.articles).toHaveLength(11);
           res.body.articles.forEach((articleArrayElement) => {
@@ -379,7 +378,6 @@ describe("COMMENTS", () => {
         .send(req)
         .expect(404)
         .then((res) => {
-          console.log(res.body);
           expect(res.body).toEqual({
             msg: "not found",
           });
