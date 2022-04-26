@@ -1,9 +1,10 @@
-// const listEndpoints = require("express-list-endpoints");
-
 //EXPRESS MODULE
 const express = require("express");
 
 const app = express();
+
+//ENDPOINTS.JSON
+const endpoints = require("./endpoints.json");
 
 // MIDDLEWARE FUNCTIONS
 app.use(express.json());
@@ -38,9 +39,10 @@ const {
   handleServerErrors,
 } = require("./controllers/controller.errors");
 
-// app.get("/api", (req, res) => {
-//   res.status(200).send(listEndpoints(app));
-// });
+//All ENDPOINTS
+app.get("/api", (req, res, next) => {
+  res.send(endpoints);
+});
 
 //TOPIC ENDPOINTS
 app.get("/api/topics", getTopics);
