@@ -62,4 +62,6 @@ Node.js version `v17.1.0`
 
 PostgreSQL version `14.0`
 
-Thank you and good luck :slightly_smiling_face:
+## Thank you
+
+Thank you for taking the time to look at my repository - Jamie Speirs :slightly_smiling_face:
