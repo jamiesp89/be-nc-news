@@ -21,7 +21,7 @@ exports.fetchArticleIdComments = (article_id) => {
 exports.postCommentByArticleId = (articleId, username, comment) => {
   return db
     .query(
-      "INSERT INTO comments (body, article_id, author) VALUES ($1, $2, $3) RETURNING body;",
+      "INSERT INTO comments (body, article_id, author) VALUES ($1, $2, $3) RETURNING *;",
       [comment, articleId, username]
     )
     .then((result) => {

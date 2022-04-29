@@ -363,7 +363,16 @@ describe("COMMENTS", () => {
         .send(req)
         .expect(201)
         .then((res) => {
-          expect(res.body.comment.body).toEqual("Yeah I agree. Totally!");
+          console.log(res.body.comment);
+          expect(res.body.comment).toBeInstanceOf(Object);
+          expect(res.body.comment).toMatchObject({
+            comment_id: expect.any(Number),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+            author: expect.any(String),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+          });
         });
     });
 
