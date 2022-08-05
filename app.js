@@ -1,3 +1,6 @@
+//CORS
+const cors = require("cors");
+
 //EXPRESS MODULE
 const express = require("express");
 
@@ -7,6 +10,8 @@ const app = express();
 const endpoints = require("./endpoints.json");
 
 // MIDDLEWARE FUNCTIONS
+app.use(cors());
+
 app.use(express.json());
 
 //REQUIRE CONTROLLER.TOPICS
