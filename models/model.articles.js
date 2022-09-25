@@ -5,7 +5,7 @@ exports.fetchArticles = (
   order = "DESC",
   topic = null
 ) => {
-  if (!["created_at", "votes", "author", "title"].includes(sort_by)) {
+  if (!["created_at", "votes", "author", "comment_count"].includes(sort_by)) {
     return Promise.reject({ status: 400, msg: "Invalid sort query" });
   }
 
