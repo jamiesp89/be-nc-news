@@ -12,7 +12,7 @@ This project is a CRUD RESTful API, built in a Node.js environment, running on a
 
 It was created using a Test Driven Development approach, for which the Jest JavaScript Testing Framework was used.
 
-A hosted version can be found [here](https://be-nc-news-1.herokuapp.com/api)
+A hosted version can be found [here](https://be-nc-news-5kz4.onrender.com/api)
 
 ### Concept
 
